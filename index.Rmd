@@ -25,3 +25,126 @@ a$years<-parse_number(a$years)
 a
 ```
 
+Some plots
+
+```{r}
+barplot(table(a$data_anal))
+```
+
+```{r}
+plot(a$x1)
+```
+
+```{r}
+a$supervisor<-as.factor(a$supervisor)
+plot(a$supervisor,a$x1, xlim=c(-10,10))
+boxplot(a$x1~a$supervisor)
+
+
+```
+
+
+```{r}
+stripchart(a$x4)
+```
+
+
+```{r}
+hist(a$x1)
+```
+
+
+```{r}
+hist(a$x1,breaks=15)
+```
+
+```{r}
+plot(x=a$x3,y=a$x4)
+abline(lm(a$x3~a$x4))
+```
+
+
+```{r}
+hist(a$x5, breaks=5)
+```
+
+
+#ggplot2
+
+```{r}
+
+iris<-iris
+iris<-as.tibble(iris)
+iris
+str(iris)
+```
+
+
+```{r}
+iris%>%ggplot(aes(x=Sepal.Length,y=Sepal.Width,color=Species))+
+  geom_point()+
+  geom_smooth(method="lm",se=F,color="red")+
+  theme_tufte()
+
+```
+
+
+```{r}
+iris%>%ggplot(aes(Sepal.Length,Sepal.Width))+
+  geom_point()+
+  geom_smooth(data=filter(iris, Species %in%
+                            c("virnica","versicolor")),method="lm")+
+  theme_bw()
+
+
+```
+
+
+###important to remember
+```{r}
+iris1<-iris%>% filter(Species=="setosa")
+ggplot(iris,aes(Sepal.Length,Sepal.Width),
+       color=Species)+
+  geom_point()+
+  geom_smooth(data=iris1,method="lm")
+```
+
+
+```{r}
+iris%>%ggplot(aes(Sepal.Length,Sepal.Width,color=Species))+
+  geom_point()+
+  geom_smooth(method="lm")
+```
+
+
+
+
+
+```{r}
+(midwest<- as.tibble(midwest) %>% select(percwhite, percbelowpoverty, poptotal))
+```
+
+
+```{r}
+ggplot(midwest,aes(percwhite,percbelowpoverty))+
+  geom_point(aes(size=poptotal))+
+  geom_smooth(aes(weight=poptotal),method="lm",size=1)+
+  geom_smooth(method="lm",color = "red")
+```
+
+
+```{r}
+sp<-ggplot(data=mtcars, aes(wt,mpg))+
+  geom_point()
+sp + geom_hline(yintercept = 20, linetype ="dashed", color = "red", size=2)
+sp+geom_vline()
+sp+geom_segment(x=3,y=15,xend=4, yend=25)
+sp+geom_segment(aes(x=3,y=15,xend=4, yend=25),arrow=arrow(length = unit(0.3,"cm")))
+```
+
+
+```{r}
+ggplot(iris)+
+  geom_point(aes(Sepal.Length,Sepal.Width,shape = Species, color=Species, size=Petal.Length,alpha=Petal.Width))
+```
+

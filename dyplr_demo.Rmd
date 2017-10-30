@@ -1,0 +1,226 @@
+---
+title: "dyplr_demo"
+author: "Diego Trindade"
+date: "26 de setembro de 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(stringr)
+library(nycflights13)
+```
+
+```{r}
+
+
+if(!file.exists("data/salary.tsv")){
+  download.file("https://raw.githubusercontent.com/rstats-tartu/datasets/master/healthcare_personnel_salary.tsv", "salary.tsv")
+}
+
+
+```
+
+```{r}
+salary<- read_tsv("salary.tsv")
+```
+#### Tidyverse
+Data in the WIDE format:
+```{r}
+salary
+```
+
+Convert wide to long, use tidyr library function "gather()"
+
+```{r}
+gather(salary)
+```
+
+```{r}
+gather(salary, key = occupation, value = wage, -Year)
+
+salary_long<-gather(salary, key = occupation, value = wage, 2:9)
+salary1
+```
+
+
+Each occupation back into separate column ("spread()"):
+
+```{r}
+salary_wide<-spread(salary1, key = Year, value = wage)
+```
+
+```{r}
+library(ggthemes)
+ggplot(salary_long, aes(Year, wage, color=occupation))+
+geom_point()
+
+```
+
+
+```{r}
+#bare names and col indexes
+select(salary_wide, occupation, `2011`:`2012`)
+```
+
+
+select 3 col and rename "Resident physicians" to "Residents" and put years as last column
+
+```{r}
+select(salary, Physicians, Residents = `Resident physicians`, Year)
+
+```
+
+```{r}
+select(salary, -Physicians)
+```
+
+
+
+```{r}
+select (salary, 1:3, 5)
+```
+
+
+```{r}
+select(salary, starts_with("Den"))
+```
+
+
+```{r}
+select(salary, ends_with("nicians"))
+```
+
+
+```{r}
+select(salary, contains("phy"))
+```
+
+
+regular expression
+```{r}
+select(salary_wide, matches("[[:digit:]]"))
+```
+
+
+```{r}
+select(salary, `Radiology technicians`, everything())
+```
+
+
+directly rename
+
+```{r}
+rename(salary, Residents = `Resident physicians`)
+
+```
+
+###filter()
+
+```{r}
+filter(salary_long, wage>2000) 
+
+```
+
+
+
+```{r}
+filter(salary_long, occupation == "Physicians" & Year == 2014)
+```
+
+#### "|" = "or"
+
+```{r}
+
+filter(salary_long, occupation == "Physicians" | Year == 2014)
+
+```
+
+
+```{r}
+filter(salary_long, occupation != "Physicians" | Year == 2014)
+
+
+```
+
+
+
+```{r}
+filter(salary_long, !(occupation == "Physicians"))
+
+```
+
+select "dentists"
+```{r}
+filter(salary_long, str_detect(occupation, "Den"))
+str_detect(salary_long$occupation, "Den")
+```
+
+
+```{r}
+filter(salary_long, !str_detect(occupation, "Den"))
+```
+
+
+Remove NA's
+
+```{r}
+
+starwars
+filter(starwars, !is.na(hair_color))
+
+```
+
+remove all na's
+
+```{r}
+starwars%>% 
+  select(1:4) %>%
+  filter(complete.cases(.))
+
+```
+
+
+```{r}
+summarise()
+salary_long%>%
+  summarise(mean_wage=mean(wage), mean_a= mean(year)
+SD=sd(wage),
+N=n(),
+SEM=SD/sqrt(N))
+
+```
+
+###group_by()
+
+```{r}
+
+salary_long%>%
+group_by(occupation)%>%
+    summarise(mean_wage=mean(wage),
+SD=sd(wage),
+N=n(),
+SEM=SD/sqrt(N))
+```
+
+
+
+```{r}
+data(starwars)
+```
+
+
+
+
+
+
+
+
+
+
+
+
